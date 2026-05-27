@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"><title>Smart Stock — Login</title>
+  <meta charset="UTF-8">
+  <title>Smart Stock — Login</title>
   <link rel="stylesheet" href="estilo.css">
 </head>
 <body class="login-screen">
@@ -19,6 +20,8 @@
     <button class="btn-act" id="btn-entrar" style="width:100%; justify-content:center; padding:0.8rem;">Acessar Sistema</button>
   </div>
 
+  <script src="global.js"></script>
+
   <script>
     document.getElementById('btn-entrar').addEventListener('click', async () => {
       const u = document.getElementById('inp-user').value;
@@ -27,7 +30,8 @@
       err.style.display = 'none';
 
       try {
-        const res = await fetch(`http://localhost:8890/auth/login`, {
+        // 2. LINHA CORRIGIDA PARA USAR A API_URL DO GLOBAL.JS
+        const res = await fetch(`${API_URL}/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ usuario: u, senha: s })
