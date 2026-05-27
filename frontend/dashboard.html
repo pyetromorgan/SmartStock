@@ -46,7 +46,7 @@
           </div>
           
           <div style="background: var(--card); border: 1px solid var(--border); padding: 1.5rem; border-radius: var(--radius);">
-            <div style="color: var(--muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem;">Estoque Crítico (<= 5 un)</div>
+            <div style="color: var(--muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem;">Estoque Crítico (&lt;= 5 un)</div>
             <div style="font-size: 2rem; font-weight: 700; color: var(--red);" id="dash-total-critico">--</div>
           </div>
 
@@ -89,7 +89,8 @@
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
       try {
-        const res = await fetch(`http://localhost:8890/produtos`, {
+        // LINHA CORRIGIDA PARA USAR API_URL EM VEZ DE LOCALHOST
+        const res = await fetch(`${API_URL}/produtos`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         const produtos = await res.json();
@@ -116,12 +117,10 @@
           }
         });
 
-        
         document.getElementById('dash-total-itens').textContent = totalItens;
         document.getElementById('dash-total-critico').textContent = totalCritico;
         document.getElementById('dash-volume-total').textContent = volumeTotal;
 
-        
         const tbody = document.getElementById('dash-tabela-atencao');
         if (linhasTabela === '') {
           tbody.innerHTML = `<tr><td colspan="4" style="padding: 2.5rem; text-align: center; color: var(--green-l); font-weight: 500;">✨ Todos os itens estão com níveis de estoque saudáveis!</td></tr>`;

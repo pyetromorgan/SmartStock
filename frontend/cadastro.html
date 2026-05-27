@@ -88,7 +88,8 @@
       }
 
       try {
-        const res = await fetch(`http://localhost:8890/produtos`, {
+        // LINE CHANGED TO USE API_URL FROM GLOBAL.JS
+        const res = await fetch(`${API_URL}/produtos`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
           body: JSON.stringify(dados)
