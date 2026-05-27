@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Stock — Histórico de Movimentações</title>
+  <link rel="stylesheet" href="estilo.css">
+  <style>
+    .table-container { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-top: 1.5rem; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { background: var(--bg2); padding: 1rem 1.5rem; color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; border-bottom: 1px solid var(--border); }
+    td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+    tr:last-child td { border: none; }
+    .badge { padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; display: inline-block; }
+    .badge.entrada { background: rgba(22, 160, 80, 0.1); color: var(--green-l); border: 1px solid rgba(34, 201, 106, 0.2); }
+    .badge.saida { background: rgba(244, 196, 48, 0.1); color: var(--amber); border: 1px solid rgba(244, 196, 48, 0.2); }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <aside>
+      <div class="brand">Smart Stock</div>
+      <ul class="nav-list">
+        <li><a href="dashboard.html" class="nav-item">📊 Dashboard</a></li>
+        <li><a href="cadastro.html" class="nav-item">💊 Cadastrar Medicamento</a></li>
+        <li><a href="movimentacoes.html" class="nav-item active">📦 Histórico Movimentações</a></li>
+        <li><a href="relatorios.html" class="nav-item">📋 Relatórios / Listagem</a></li>
+      </ul>
+      <div style="padding:0 0.75rem;"><button class="nav-item" id="btn-logout" style="width:100%; color:var(--red); background:rgba(229,57,53,0.05); border:none;">🚪 Encerrar Sessão</button></div>
+    </aside>
+
+    <div class="main-wrapper">
+      <header>
+        <div>
+          <button class="btn-act" id="btn-trigger-entrada">📥 Lançar Entrada</button>
+          <button class="btn-act" id="btn-trigger-saida" style="background:var(--amber)">📤 Lançar Saída</button>
+        </div>
+        <div class="header-actions">
+          <button class="noti-btn" id="btn-toggle-alerts">🔔 <span class="noti-badge">0</span></button>
+          <div class="user-profile">
+            <div class="avatar" id="user-av">??</div>
+            <div class="user-info"><span class="u-name" id="user-name">...</span><span class="u-role" id="user-role">...</span></div>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <h2 style="font-family:var(--serif); font-size:2rem; margin-bottom:0.5rem;">Histórico de Movimentações</h2>
+        <p style="color:var(--muted)">Registo completo de todas as entradas e saídas de stock efetuadas.</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Data/Hora</th>
+                <th>Medicamento (ID)</th>
+                <th>Tipo</th>
+                <th>Quantidade</th>
+                <th>Operador</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-movimentacoes">
+              <tr>
+                <td colspan="5" style="text-align: center; color: var(--muted); padding: 2rem;">A carregar movimentações...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <div class="modal-bg" id="modal-entrada"><div class="modal-card"><div class="modal-header"><div class="modal-title">Entrada</div><button data-close="modal-entrada">&times;</button></div><div class="modal-body"><div class="form-group g-full"><label>Produto *</label><select id="me-prod" class="form-control"></select></div><div class="form-group g-full"><label>Quantidade *</label><input type="number" id="me-qtd" class="form-control" value="0"></div><div class="form-group g-full"><label>Validade</label><input type="date" id="me-val" class="form-control"></div></div><div class="modal-footer"><button class="btn-act" id="btn-confirmar-entrada">Confirmar</button></div></div></div>
+  <div class="modal-bg" id="modal-saida"><div class="modal-card"><div class="modal-header"><div class="modal-title">Saída</div><button data-close="modal-saida">&times;</button></div><div class="modal-body"><div class="form-group g-full"><label>Produto *</label><select id="ms-prod" class="form-control"></select></div><div class="form-group g-full"><label>Quantidade *</label><input type="number" id="ms-qtd" class="form-control" value="0"></div></div><div class="modal-footer"><button class="btn-act" id="btn-confirmar-saida">Confirmar</button></div></div></div>
+
+  <script src="global.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const tabela = document.getElementById('tabela-movimentacoes');
+      try {
+        const res = await fetch(`http://localhost:8890/movimentacoes`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+        const dados = await res.json();
+
+        if (!res.ok || dados.length === 0) {
+          tabela.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--muted); padding: 2rem;">Nenhuma movimentação registada.</td></tr>`;
+          return;
+        }
+
+        let linhas = '';
+        dados.forEach(mov => {
+          const dataFormatada = new Date(mov.data).toLocaleString('pt-PT');
+          const badgeClass = mov.tipo.toLowerCase() === 'entrada' ? 'entrada' : 'saida';
+          
+          linhas += `
+            <tr>
+              <td style="color: var(--muted); font-size: 0.9rem;">${dataFormatada}</td>
+              <td style="font-weight: 500;">${mov.produto_id}</td>
+              <td><span class="badge ${badgeClass}">${mov.tipo}</span></td>
+              <td style="font-weight: 600;">${mov.qtd_movimentacao}</td>
+              <td style="color: var(--muted);">${mov.usuario}</td>
+            </tr>
+          `;
+        });
+        tabela.innerHTML = linhas;
+      } catch (err) {
+        tabela.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--red); padding: 2rem;">Erro ao carregar dados do servidor.</td></tr>`;
+      }
+    });
+  </script>
+</body>
+</html>

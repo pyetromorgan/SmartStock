@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+//////////////////////////////////
+// Counter para auto-increment
+//////////////////////////////////
+model Counter {
+  id  String @id @map("_id")
+  seq Int
+}
+
+//////////////////////////////////
+// Categorias
+//////////////////////////////////
+model Categoria {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  descricao String
+}
+
+//////////////////////////////////
+// Fornecedores
+//////////////////////////////////
+model Fornecedor {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  razao_social  String
+  nome_fantasia String?
+
+  cnpj  String @unique
+  email String @unique
+
+  logradouro  String
+  num_imovel  String
+  complemento String?
+
+  bairro    String
+  municipio String
+  uf        String
+  cep       String
+
+  telefone String
+
+  reposicoes Reposicao[]
+}
+
+//////////////////////////////////
+// Produtos
+//////////////////////////////////
+model Produto {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  nome     String
+  marca    String
+  detalhes String?
+
+  quantidade     Float
+  unidade_medida String
+
+  preco_unitario Float
+  qtd_estoque    Float
+
+  // referências MongoDB
+  categoria_ids  String[] @db.ObjectId
+  fornecedor_ids String[] @db.ObjectId
+
+  itens          ItemPedido[]
+  movimentacoes Movimentacao[]
+  reposicoes     Reposicao[]
+}
+
+//////////////////////////////////
+// Clientes
+//////////////////////////////////
+model Cliente {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  nome String
+
+  cpf String @unique
+
+  data_nascimento DateTime?
+
+  email String @unique
+
+  logradouro  String
+  num_imovel  String
+  complemento String?
+
+  bairro    String
+  municipio String
+  uf        String
+  cep       String
+
+  celular String
+
+  pedidos Pedido[]
+}
+
+//////////////////////////////////
+// Pedidos
+//////////////////////////////////
+model Pedido {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  num_pedido Int @unique
+
+  data_hora DateTime @default(now())
+
+  cliente_id String  @db.ObjectId
+  cliente    Cliente @relation(fields: [cliente_id], references: [id])
+
+  itens ItemPedido[]
+}
+
+//////////////////////////////////
+// Itens do pedido
+//////////////////////////////////
+model ItemPedido {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  num_item Int
+
+  quantidade Float
+
+  produto_id String  @db.ObjectId
+  produto    Produto @relation(fields: [produto_id], references: [id])
+
+  pedido_id String @db.ObjectId
+  pedido    Pedido @relation(fields: [pedido_id], references: [id])
+
+  @@unique([pedido_id, num_item])
+}
+
+//////////////////////////////////
+// Movimentações de estoque
+//////////////////////////////////
+model Movimentacao {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  produto_id String  @db.ObjectId
+  produto    Produto @relation(fields: [produto_id], references: [id])
+
+  tipo String
+
+  qtd_movimentacao Float
+
+  data DateTime
+
+  usuario String
+}
+
+//////////////////////////////////
+// Reposição de produtos
+//////////////////////////////////
+model Reposicao {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  produto_id String  @db.ObjectId
+  produto    Produto @relation(fields: [produto_id], references: [id])
+
+  fornecedor_id String     @db.ObjectId
+  fornecedor    Fornecedor @relation(fields: [fornecedor_id], references: [id])
+
+  qtd_sugerida Float
+
+  data_geracao DateTime
+
+  status String
+}

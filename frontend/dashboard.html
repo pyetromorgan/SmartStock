@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Stock — Dashboard</title>
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside>
+      <div class="brand">Smart Stock</div>
+      <ul class="nav-list">
+        <li><a href="dashboard.html" class="nav-item active">📊 Dashboard</a></li>
+        <li><a href="cadastro.html" class="nav-item">💊 Cadastrar Medicamento</a></li>
+        <li><a href="movimentacoes.html" class="nav-item">📦 Histórico Movimentações</a></li>
+        <li><a href="relatorios.html" class="nav-item">📋 Relatórios / Listagem</a></li>
+      </ul>
+      <div style="padding:0 0.75rem;"><button class="nav-item" id="btn-logout" style="width:100%; color:var(--red); background:rgba(229,57,53,0.05); border:none;">🚪 Encerrar Sessão</button></div>
+    </aside>
+
+    <div class="main-wrapper">
+      <header>
+        <div>
+          <button class="btn-act" id="btn-trigger-entrada">📥 Lançar Entrada</button>
+          <button class="btn-act" id="btn-trigger-saida" style="background:var(--amber)">📤 Lançar Saída</button>
+        </div>
+        <div class="header-actions">
+          <button class="noti-btn" id="btn-toggle-alerts">🔔 <span class="noti-badge">0</span></button>
+          <div class="user-profile">
+            <div class="avatar" id="user-av">??</div>
+            <div class="user-info"><span class="u-name" id="user-name">...</span><span class="u-role" id="user-role">...</span></div>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <div style="margin-bottom: 2rem;">
+          <h2 style="font-family:var(--serif); font-size:2.2rem; margin-bottom: 0.25rem;">Painel de Controle</h2>
+          <p style="color: var(--muted); font-size: 0.95rem;">Visão geral da farmácia e níveis de estoque em tempo real.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+          <div style="background: var(--card); border: 1px solid var(--border); padding: 1.5rem; border-radius: var(--radius);">
+            <div style="color: var(--muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem;">Total de Itens</div>
+            <div style="font-size: 2rem; font-weight: 700; color: var(--text);" id="dash-total-itens">--</div>
+          </div>
+          
+          <div style="background: var(--card); border: 1px solid var(--border); padding: 1.5rem; border-radius: var(--radius);">
+            <div style="color: var(--muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem;">Estoque Crítico (<= 5 un)</div>
+            <div style="font-size: 2rem; font-weight: 700; color: var(--red);" id="dash-total-critico">--</div>
+          </div>
+
+          <div style="background: var(--card); border: 1px solid var(--border); padding: 1.5rem; border-radius: var(--radius);">
+            <div style="color: var(--muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem;">Volume Geral em Estoque</div>
+            <div style="font-size: 2rem; font-weight: 700; color: var(--green-l);" id="dash-volume-total">--</div>
+          </div>
+        </div>
+
+        <h3 style="font-family: var(--serif); font-size: 1.4rem; margin-bottom: 1rem;">Medicamentos Necessitando de Atenção</h3>
+        <div style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+              <tr style="background: var(--bg2);">
+                <th style="padding: 1rem 1.5rem; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; font-weight: 600;">Medicamento</th>
+                <th style="padding: 1rem 1.5rem; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; font-weight: 600;">Laboratório</th>
+                <th style="padding: 1rem 1.5rem; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; font-weight: 600;">Qtd Atual</th>
+                <th style="padding: 1rem 1.5rem; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; font-weight: 600;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="dash-tabela-atencao">
+              <tr>
+                <td colspan="4" style="padding: 2rem; text-align: center; color: var(--muted);">Analisando inventário...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="alert-panel"></div>
+
+  <div id="toast-container"></div>
+  <div class="modal-bg" id="modal-entrada"><div class="modal-card"><div class="modal-header"><div class="modal-title">Entrada</div><button data-close="modal-entrada">&times;</button></div><div class="modal-body"><div class="form-group g-full"><label>Produto</label><select id="me-prod" class="form-control"></select></div><div class="form-group g-full"><label>Qtd</label><input type="number" id="me-qtd" class="form-control"></div><div class="form-group g-full"><label>Validade</label><input type="date" id="me-val" class="form-control"></div></div><div class="modal-footer"><button class="btn-act" id="btn-confirmar-entrada">Confirmar</button></div></div></div>
+  <div class="modal-bg" id="modal-saida"><div class="modal-card"><div class="modal-header"><div class="modal-title">Saída</div><button data-close="modal-saida">&times;</button></div><div class="modal-body"><div class="form-group g-full"><label>Produto</label><select id="ms-prod" class="form-control"></select></div><div class="form-group g-full"><label>Qtd</label><input type="number" id="ms-qtd" class="form-control"></div></div><div class="modal-footer"><button class="btn-act" id="btn-confirmar-saida">Confirmar</button></div></div></div>
+
+  <script src="global.js"></script>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const res = await fetch(`http://localhost:8890/produtos`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+        const produtos = await res.json();
+
+        let totalItens = produtos.length;
+        let totalCritico = 0;
+        let volumeTotal = 0;
+        let linhasTabela = '';
+
+        produtos.forEach(p => {
+          volumeTotal += p.qtd_estoque;
+          const critico = p.qtd_estoque <= 5;
+          
+          if (critico) {
+            totalCritico++;
+            linhasTabela += `
+              <tr>
+                <td style="padding: 1rem 1.5rem; font-weight: 500; border-bottom: 1px solid var(--border);">${p.nome}</td>
+                <td style="padding: 1rem 1.5rem; color: var(--muted); border-bottom: 1px solid var(--border);">${p.marca}</td>
+                <td style="padding: 1rem 1.5rem; font-weight: 600; color: var(--red); border-bottom: 1px solid var(--border);">${p.qtd_estoque} ${p.unidade_medida}</td>
+                <td style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);"><span style="background: rgba(229,57,53,0.1); color: var(--red); padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight:700; border: 1px solid rgba(229,57,53,0.2);">ESTOQUE BAIXO</span></td>
+              </tr>
+            `;
+          }
+        });
+
+        
+        document.getElementById('dash-total-itens').textContent = totalItens;
+        document.getElementById('dash-total-critico').textContent = totalCritico;
+        document.getElementById('dash-volume-total').textContent = volumeTotal;
+
+        
+        const tbody = document.getElementById('dash-tabela-atencao');
+        if (linhasTabela === '') {
+          tbody.innerHTML = `<tr><td colspan="4" style="padding: 2.5rem; text-align: center; color: var(--green-l); font-weight: 500;">✨ Todos os itens estão com níveis de estoque saudáveis!</td></tr>`;
+        } else {
+          tbody.innerHTML = linhasTabela;
+        }
+
+      } catch (e) {
+        console.error("Erro ao renderizar dados do Dashboard:", e);
+        document.getElementById('dash-tabela-atencao').innerHTML = `<tr><td colspan="4" style="padding: 2rem; text-align: center; color: var(--red);">Erro ao conectar com o servidor para obter dados.</td></tr>`;
+      }
+    });
+  </script>
+</body>
+</html>
