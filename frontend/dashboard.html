@@ -89,7 +89,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
       try {
-        // LINHA CORRIGIDA PARA USAR API_URL EM VEZ DE LOCALHOST
+      
         const res = await fetch(`${API_URL}/produtos`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
