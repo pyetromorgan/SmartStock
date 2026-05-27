@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:8890";
+const API_URL = "https://smartstock-239f.onrender.com"; 
+//const API_URL = "http://localhost:8890";
 
 document.addEventListener("DOMContentLoaded", () => {
   verificarSessao();
