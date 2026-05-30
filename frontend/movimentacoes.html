@@ -78,7 +78,7 @@
     document.addEventListener("DOMContentLoaded", async () => {
       const tabela = document.getElementById('tabela-movimentacoes');
       try {
-        const res = await fetch(`http://localhost:8890/movimentacoes`, {
+        const res = await fetch(`${API_URL}/movimentacoes`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         const dados = await res.json();
@@ -88,12 +88,12 @@
           return;
         }
 
-        let linhas = '';
+        let lines = '';
         dados.forEach(mov => {
           const dataFormatada = new Date(mov.data).toLocaleString('pt-PT');
           const badgeClass = mov.tipo.toLowerCase() === 'entrada' ? 'entrada' : 'saida';
           
-          linhas += `
+          lines += `
             <tr>
               <td style="color: var(--muted); font-size: 0.9rem;">${dataFormatada}</td>
               <td style="font-weight: 500;">${mov.produto_id}</td>
@@ -103,7 +103,7 @@
             </tr>
           `;
         });
-        tabela.innerHTML = linhas;
+        tabela.innerHTML = lines;
       } catch (err) {
         tabela.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--red); padding: 2rem;">Erro ao carregar dados do servidor.</td></tr>`;
       }

@@ -74,14 +74,13 @@
   <script src="global.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
-      // evento de impressão
       document.getElementById('btn-imprimir').addEventListener('click', () => window.print());
 
       const grid = document.getElementById('inventario-grid');
       const totalTxt = document.getElementById('total-medicamentos');
 
       try {
-        const res = await fetch(`http://localhost:8890/produtos`, {
+        const res = await fetch(`${API_URL}/produtos`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
         const produtos = await res.json();
