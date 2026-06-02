@@ -52,7 +52,7 @@
             <thead>
               <tr>
                 <th>Data/Hora</th>
-                <th>Medicamento (ID)</th>
+                <th>Medicamento</th>
                 <th>Tipo</th>
                 <th>Quantidade</th>
                 <th>Operador</th>
@@ -93,13 +93,16 @@
           const dataFormatada = new Date(mov.data).toLocaleString('pt-PT');
           const badgeClass = mov.tipo.toLowerCase() === 'entrada' ? 'entrada' : 'saida';
           
+          // Captura o nome do medicamento vindo do relacionamento mapeado no controlador
+          const nomeExibicao = mov.produto ? mov.produto.nome : 'Produto não identificado';
+          
           lines += `
             <tr>
               <td style="color: var(--muted); font-size: 0.9rem;">${dataFormatada}</td>
-              <td style="font-weight: 500;">${mov.produto_id}</td>
+              <td style="font-weight: 500;">${nomeExibicao}</td>
               <td><span class="badge ${badgeClass}">${mov.tipo}</span></td>
               <td style="font-weight: 600;">${mov.qtd_movimentacao}</td>
-              <td style="color: var(--muted);">${mov.usuario}</td>
+              <td style="color: var(--muted);">${mov.usuario || 'Sistema'}</td>
             </tr>
           `;
         });
