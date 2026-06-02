@@ -4,19 +4,21 @@ export const criarMovimentacao = async (req, res) => {
   const { produtoId, quantidade, tipo, usuario } = req.body;
 
   try {
-  
+    const qtdNum = parseFloat(quantidade);
+
     const novaMov = await prisma.movimentacao.create({
       data: {
         produto_id: produtoId,
-        qtd_movimentacao: quantidade,
+        qtd_movimentacao: qtdNum,
         tipo: tipo,
         data: new Date(),
-        usuario: usuario
+        usuario: usuario || 'Sistema'
       }
     });
 
   
-    const valorAjuste = tipo === "ENTRADA" ? quantidade : -quantidade;
+    const valorAjuste = tipo.toUpperCase() === "ENTRADA" ? qtdNum : -qtdNum;
+    
     await prisma.produto.update({
       where: { id: produtoId },
       data: {
@@ -26,6 +28,7 @@ export const criarMovimentacao = async (req, res) => {
 
     return res.status(201).json(novaMov);
   } catch (error) {
+    console.error("Erro ao criar movimentação:", error);
     return res.status(500).json({ error: error.message });
   }
 };
@@ -41,11 +44,12 @@ export const listarMovimentacoes = async (req, res) => {
         }
       },
       orderBy: {
-        dataHora: 'desc'
+        data: 'desc' 
       }
     });
     return res.json(movimentacoes);
   } catch (error) {
+    console.error("Erro ao listar movimentações:", error);
     return res.status(500).json({ error: error.message });
   }
 };
