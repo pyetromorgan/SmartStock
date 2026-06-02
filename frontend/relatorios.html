@@ -100,7 +100,7 @@
         
         produtos.forEach(p => {
           const isLow = p.qtd_estoque <= 5;
-          const produtoId = String(p.id || p._id).trim();
+          const produtoId = String(p.id || p._id || '').trim();
 
           cards += `
             <div class="card-prod">
@@ -120,7 +120,7 @@
               </div>
               
               <div class="btn-deletar-container" style="margin-top: 1rem; text-align: right;">
-                <button onclick="deletarProdutoDoSistema('${produtoId}')" style="background: rgba(229,57,53,0.1); color: var(--red); border: 1px solid rgba(229,57,53,0.2); padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: background 0.2s;">
+                <button data-id="${produtoId}" onclick="deletarProdutoDoSistema(this)" style="background: rgba(229,57,53,0.1); color: var(--red); border: 1px solid rgba(229,57,53,0.2); padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: background 0.2s;">
                   🗑️ Excluir
                 </button>
               </div>
@@ -133,9 +133,11 @@
       }
     }
 
-    async function deletarProdutoDoSistema(id) {
-      if (!id || id === 'undefined') {
-        alert("Erro: Não foi possível identificar o ID deste medicamento.");
+    async function deletarProdutoDoSistema(botao) {
+      const id = botao.getAttribute('data-id');
+
+      if (!id || id === 'undefined' || id.includes('…')) {
+        alert("Erro: O ID do medicamento está inválido ou foi cortado pelo navegador.");
         return;
       }
 
