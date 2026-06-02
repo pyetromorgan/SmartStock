@@ -20,13 +20,12 @@ export const listarProdutos = async (req, res) => {
   }
 };
 
-// FUNÇÃO ATUALIZADA: Agora converte o ID para Número antes de mandar pro Prisma
 export const deletarProduto = async (req, res) => {
   try {
     const { id } = req.params;
 
     const produtoDeletado = await prisma.produto.delete({
-      where: { id: Number(id) } // <-- Mudança aqui: Number(id) garante que o ID vire um número inteiro
+      where: { id: Number(id) } 
     });
 
     return res.status(200).json({ message: "Medicamento excluído com sucesso!", produtoDeletado });

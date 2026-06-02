@@ -5,6 +5,6 @@ const router = Router();
 
 router.post('/', criarProduto);
 router.get('/', listarProdutos);
-router.delete('/:id', deletarProduto); // <-- NOVA LINHA ADICIONADA AQUI
+router.delete('/:id', deletarProduto); 
 
 export default router;
