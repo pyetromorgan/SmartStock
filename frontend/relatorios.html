@@ -100,8 +100,7 @@
         
         produtos.forEach(p => {
           const isLow = p.qtd_estoque <= 5;
-          
-          const produtoId = p.id || p._id;
+          const produtoId = String(p.id || p._id).trim();
 
           cards += `
             <div class="card-prod">
