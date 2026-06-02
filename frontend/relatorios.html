@@ -17,7 +17,7 @@
     .stock-tag.low { color: var(--red); }
 
     @media print {
-      aside, header, .actions-bar { display: none !important; }
+      aside, header, .actions-bar, .btn-deletar-container { display: none !important; }
       .app-container { grid-template-columns: 1fr; }
       main { padding: 0; background: #fff; color: #000; }
       .card-prod { border: 1px solid #000; background: #fff; color: #000; }
@@ -76,6 +76,10 @@
     document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById('btn-imprimir').addEventListener('click', () => window.print());
 
+      carregarProdutos();
+    });
+
+    async function carregarProdutos() {
       const grid = document.getElementById('inventario-grid');
       const totalTxt = document.getElementById('total-medicamentos');
 
@@ -112,6 +116,12 @@
                 <span style="font-weight: 500;">Qtd em Stock:</span>
                 <span class="stock-tag ${isLow ? 'low' : ''}">${p.qtd_estoque}</span>
               </div>
+              
+              <div class="btn-deletar-container" style="margin-top: 1rem; text-align: right;">
+                <button onclick="deletarProdutoDoSistema('${p.id}')" style="background: rgba(229,57,53,0.1); color: var(--red); border: 1px solid rgba(229,57,53,0.2); padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: background 0.2s;">
+                  🗑️ Excluir
+                </button>
+              </div>
             </div>
           `;
         });
@@ -119,7 +129,31 @@
       } catch(e) {
         grid.innerHTML = `<p style="grid-column: span 3; color: var(--red); text-align: center; padding: 3rem;">Erro ao conectar com o servidor.</p>`;
       }
-    });
+    }
+
+    async function deletarProdutoDoSistema(id) {
+      if (!confirm("Tem a certeza que deseja eliminar este medicamento do sistema definitivamente?")) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/produtos/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+
+        if (res.ok) {
+          alert("Medicamento excluído com sucesso!");
+          carregarProdutos(); 
+        } else {
+          const dados = await res.json();
+          alert("Erro ao excluir: " + (dados.message || dados.error));
+        }
+      } catch (err) {
+        console.error("Erro ao conectar:", err);
+        alert("Erro ao conectar com o servidor.");
+      }
+    }
   </script>
 </body>
 </html>

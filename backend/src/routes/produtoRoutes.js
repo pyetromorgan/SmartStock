@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { criarProduto, listarProdutos } from '../controllers/produtoController.js';
+import { criarProduto, listarProdutos, deletarProduto } from '../controllers/produtoController.js';
 
 const router = Router();
 
 router.post('/', criarProduto);
 router.get('/', listarProdutos);
+router.delete('/:id', deletarProduto); // <-- NOVA LINHA ADICIONADA AQUI
 
 export default router;

@@ -19,3 +19,17 @@ export const listarProdutos = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+export const deletarProduto = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const produtoDeletado = await prisma.produto.delete({
+      where: { id: id }
+    });
+
+    return res.status(200).json({ message: "Medicamento excluído com sucesso!", produtoDeletado });
+  } catch (error) {
+    return res.status(500).json({ message: "Erro ao excluir o medicamento.", error: error.message });
+  }
+};
