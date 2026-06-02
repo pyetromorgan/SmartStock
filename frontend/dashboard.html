@@ -10,22 +10,22 @@
     <aside>
       <div class="brand">Smart Stock</div>
       <ul class="nav-list">
-        <li><a href="dashboard.html" class="nav-item active">📊 Dashboard</a></li>
-        <li><a href="cadastro.html" class="nav-item">💊 Cadastrar Medicamento</a></li>
-        <li><a href="movimentacoes.html" class="nav-item">📦 Histórico Movimentações</a></li>
-        <li><a href="relatorios.html" class="nav-item">📋 Relatórios / Listagem</a></li>
+        <li><a href="dashboard.html" class="nav-item active">Dashboard</a></li>
+        <li><a href="cadastro.html" class="nav-item">Cadastrar Medicamento</a></li>
+        <li><a href="movimentacoes.html" class="nav-item">Histórico Movimentações</a></li>
+        <li><a href="relatorios.html" class="nav-item">Relatórios / Listagem</a></li>
       </ul>
-      <div style="padding:0 0.75rem;"><button class="nav-item" id="btn-logout" style="width:100%; color:var(--red); background:rgba(229,57,53,0.05); border:none;">🚪 Encerrar Sessão</button></div>
+      <div style="padding:0 0.75rem;"><button class="nav-item" id="btn-logout" style="width:100%; color:var(--red); background:rgba(229,57,53,0.05); border:none;">Encerrar Sessão</button></div>
     </aside>
 
     <div class="main-wrapper">
       <header>
         <div>
-          <button class="btn-act" id="btn-trigger-entrada">📥 Lançar Entrada</button>
-          <button class="btn-act" id="btn-trigger-saida" style="background:var(--amber)">📤 Lançar Saída</button>
+          <button class="btn-act" id="btn-trigger-entrada">Lançar Entrada</button>
+          <button class="btn-act" id="btn-trigger-saida" style="background:var(--amber)">Lançar Saída</button>
         </div>
         <div class="header-actions">
-          <button class="noti-btn" id="btn-toggle-alerts">🔔 <span class="noti-badge">0</span></button>
+          <button class="noti-btn" id="btn-toggle-alerts"><span class="noti-badge">0</span></button>
           <div class="user-profile">
             <div class="avatar" id="user-av">??</div>
             <div class="user-info"><span class="u-name" id="user-name">...</span><span class="u-role" id="user-role">...</span></div>
@@ -123,7 +123,7 @@
 
         const tbody = document.getElementById('dash-tabela-atencao');
         if (linhasTabela === '') {
-          tbody.innerHTML = `<tr><td colspan="4" style="padding: 2.5rem; text-align: center; color: var(--green-l); font-weight: 500;">✨ Todos os itens estão com níveis de estoque saudáveis!</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="4" style="padding: 2.5rem; text-align: center; color: var(--green-l); font-weight: 500;">Todos os itens estão com níveis de estoque saudáveis!</td></tr>`;
         } else {
           tbody.innerHTML = linhasTabela;
         }

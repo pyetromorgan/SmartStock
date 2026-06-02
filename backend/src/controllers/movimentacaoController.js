@@ -33,7 +33,16 @@ export const criarMovimentacao = async (req, res) => {
 export const listarMovimentacoes = async (req, res) => {
   try {
     const movimentacoes = await prisma.movimentacao.findMany({
-      orderBy: { data: 'desc' }
+      include: {
+        produto: {
+          select: {
+            nome: true
+          }
+        }
+      },
+      orderBy: {
+        dataHora: 'desc'
+      }
     });
     return res.json(movimentacoes);
   } catch (error) {

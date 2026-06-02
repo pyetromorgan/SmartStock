@@ -20,22 +20,22 @@
     <aside>
       <div class="brand">Smart Stock</div>
       <ul class="nav-list">
-        <li><a href="dashboard.html" class="nav-item">📊 Dashboard</a></li>
-        <li><a href="cadastro.html" class="nav-item">💊 Cadastrar Medicamento</a></li>
-        <li><a href="movimentacoes.html" class="nav-item active">📦 Histórico Movimentações</a></li>
-        <li><a href="relatorios.html" class="nav-item">📋 Relatórios / Listagem</a></li>
+        <li><a href="dashboard.html" class="nav-item">Dashboard</a></li>
+        <li><a href="cadastro.html" class="nav-item">Cadastrar Medicamento</a></li>
+        <li><a href="movimentacoes.html" class="nav-item active">Histórico Movimentações</a></li>
+        <li><a href="relatorios.html" class="nav-item">Relatórios / Listagem</a></li>
       </ul>
-      <div style="padding:0 0.75rem;"><button class="nav-item" id="btn-logout" style="width:100%; color:var(--red); background:rgba(229,57,53,0.05); border:none;">🚪 Encerrar Sessão</button></div>
+      <div style="padding:0 0.75rem;"><button class="nav-item" id="btn-logout" style="width:100%; color:var(--red); background:rgba(229,57,53,0.05); border:none;">Encerrar Sessão</button></div>
     </aside>
 
     <div class="main-wrapper">
       <header>
         <div>
-          <button class="btn-act" id="btn-trigger-entrada">📥 Lançar Entrada</button>
-          <button class="btn-act" id="btn-trigger-saida" style="background:var(--amber)">📤 Lançar Saída</button>
+          <button class="btn-act" id="btn-trigger-entrada">Lançar Entrada</button>
+          <button class="btn-act" id="btn-trigger-saida" style="background:var(--amber)">Lançar Saída</button>
         </div>
         <div class="header-actions">
-          <button class="noti-btn" id="btn-toggle-alerts">🔔 <span class="noti-badge">0</span></button>
+          <button class="noti-btn" id="btn-toggle-alerts"><span class="noti-badge">0</span></button>
           <div class="user-profile">
             <div class="avatar" id="user-av">??</div>
             <div class="user-info"><span class="u-name" id="user-name">...</span><span class="u-role" id="user-role">...</span></div>
@@ -52,7 +52,7 @@
             <thead>
               <tr>
                 <th>Data/Hora</th>
-                <th>Medicamento (ID)</th>
+                <th>Medicamento</th>
                 <th>Tipo</th>
                 <th>Quantidade</th>
                 <th>Operador</th>
@@ -90,16 +90,17 @@
 
         let lines = '';
         dados.forEach(mov => {
-          const dataFormatada = new Date(mov.data).toLocaleString('pt-PT');
+          const dataFormatada = new Date(mov.data || mov.dataHora || mov.createdAt).toLocaleString('pt-PT');
           const badgeClass = mov.tipo.toLowerCase() === 'entrada' ? 'entrada' : 'saida';
+          const nomeProduto = mov.produto ? mov.produto.nome : 'Produto não encontrado';
           
           lines += `
             <tr>
               <td style="color: var(--muted); font-size: 0.9rem;">${dataFormatada}</td>
-              <td style="font-weight: 500;">${mov.produto_id}</td>
+              <td style="font-weight: 500;">${nomeProduto}</td>
               <td><span class="badge ${badgeClass}">${mov.tipo}</span></td>
-              <td style="font-weight: 600;">${mov.qtd_movimentacao}</td>
-              <td style="color: var(--muted);">${mov.usuario}</td>
+              <td style="font-weight: 600;">${mov.qtd_movimentacao || mov.quantidade}</td>
+              <td style="color: var(--muted);">${mov.usuario || mov.operador || 'Sistema'}</td>
             </tr>
           `;
         });
