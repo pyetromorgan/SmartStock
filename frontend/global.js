@@ -33,13 +33,12 @@ function configurarEventosGlobais() {
   document.getElementById('btn-trigger-entrada')?.addEventListener('click', () => openModal('modal-entrada'));
   document.getElementById('btn-trigger-saida')?.addEventListener('click', () => openModal('modal-saida'));
   
-  // Gatilho do Sininho: Alterna a classe de abertura e força a atualização dos dados internos
   document.getElementById('btn-toggle-alerts')?.addEventListener('click', () => {
     const panel = document.getElementById('alert-panel');
     if (panel) {
       panel.classList.toggle('open');
       if (panel.classList.contains('open')) {
-        verificarAlertasGlobais(); // 
+        verificarAlertasGlobais(); 
       }
     }
   });
@@ -65,15 +64,43 @@ function toast(mensagem, tipo = '') {
   if (!container) return;
   const elemento = document.createElement('div');
   elemento.className = `toast ${tipo}`;
-  elemento.innerHTML = mensagem;
+  elemento.innerHTML = message || mensagem;
   container.appendChild(elemento);
   setTimeout(() => elemento.remove(), 3500);
 }
 
 async function verificarAlertasGlobais() {
   const badge = document.querySelector('.noti-badge');
-  const panel = document.getElementById('alert-panel');
+  let panel = document.getElementById('alert-panel');
   if (!badge) return;
+
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'alert-panel';
+    panel.style.position = 'absolute';
+    panel.style.right = '2rem';
+    panel.style.top = '70px';
+    panel.style.width = '340px';
+    panel.style.background = 'var(--card)';
+    panel.style.border = '1px solid var(--border)';
+    panel.style.borderRadius = 'var(--radius)';
+    panel.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
+    panel.style.zIndex = '9999';
+    panel.style.display = 'none'; 
+    panel.style.flexDirection = 'column';
+    panel.style.maxHeight = '450px';
+    
+  
+    const wrapper = document.querySelector('.main-wrapper') || document.body;
+    wrapper.appendChild(panel);
+  }
+
+
+  if (panel.classList.contains('open')) {
+    panel.style.display = 'flex';
+  } else {
+    panel.style.display = 'none';
+  }
 
   try {
     const res = await fetch(`${API_URL}/produtos`, {
@@ -94,7 +121,6 @@ async function verificarAlertasGlobais() {
         });
       }
 
-  
       if (p.dataValidade) {
         const dataVal = new Date(p.dataValidade);
         if (dataVal <= hoje) {
@@ -111,7 +137,6 @@ async function verificarAlertasGlobais() {
       }
     });
 
-
     if (alertas.length > 0) {
       badge.textContent = alertas.length;
       badge.style.display = 'flex';
@@ -123,7 +148,7 @@ async function verificarAlertasGlobais() {
       panel.innerHTML = `
         <div style="padding: 1.25rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
           <h3 style="font-family: var(--serif); color: var(--text); margin: 0; font-size: 1.2rem;">Notificações de Risco</h3>
-          <button onclick="document.getElementById('alert-panel').classList.remove('open')" style="background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.5rem; line-height: 1;">&times;</button>
+          <button onclick="document.getElementById('alert-panel').classList.remove('open'); document.getElementById('alert-panel').style.display = 'none';" style="background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.5rem; line-height: 1;">&times;</button>
         </div>
         <div style="padding: 1rem; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 0.75rem;" id="alert-list-container"></div>
       `;
