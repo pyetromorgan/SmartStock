@@ -25,7 +25,7 @@ export const deletarProduto = async (req, res) => {
     const { id } = req.params;
 
     const produtoDeletado = await prisma.produto.delete({
-      where: { id: Number(id) } 
+      where: { id: id }
     });
 
     return res.status(200).json({ message: "Medicamento excluído com sucesso!", produtoDeletado });
