@@ -24,27 +24,15 @@ export const deletarProduto = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const tabelas = Object.keys(prisma);
-    const nomeMovimentacao = tabelas.find(t => t.toLowerCase().includes('movimentacao'));
-
-    if (nomeMovimentacao && prisma[nomeMovimentacao].deleteMany) {
-      await prisma[nomeMovimentacao].deleteMany({
-        where: {
-          OR: [
-            { produtoId: id },
-            { id_produto: id },
-            { produto: id }
-          ]
-        }
-      });
-    }
-
     const produtoDeletado = await prisma.produto.delete({
       where: { id: id }
     });
 
     return res.status(200).json({ message: "Medicamento excluído com sucesso!", produtoDeletado });
   } catch (error) {
-    return res.status(500).json({ message: "Erro ao excluir o medicamento.", error: error.message });
+    return res.status(500).json({ 
+      message: "Erro interno do Prisma no servidor", 
+      error: error.message 
+    });
   }
 };
