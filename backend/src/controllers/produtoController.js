@@ -24,9 +24,20 @@ export const deletarProduto = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await prisma.movimentacao.deleteMany({
-      where: { produtoId: id }
-    });
+    const tabelas = Object.keys(prisma);
+    const nomeMovimentacao = tabelas.find(t => t.toLowerCase().includes('movimentacao'));
+
+    if (nomeMovimentacao && prisma[nomeMovimentacao].deleteMany) {
+      await prisma[nomeMovimentacao].deleteMany({
+        where: {
+          OR: [
+            { produtoId: id },
+            { id_produto: id },
+            { produto: id }
+          ]
+        }
+      });
+    }
 
     const produtoDeletado = await prisma.produto.delete({
       where: { id: id }
