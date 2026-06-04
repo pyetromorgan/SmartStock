@@ -64,7 +64,7 @@ function toast(mensagem, tipo = '') {
   if (!container) return;
   const elemento = document.createElement('div');
   elemento.className = `toast ${tipo}`;
-  elemento.innerHTML = message || mensagem;
+  elemento.innerHTML = mensagem;
   container.appendChild(elemento);
   setTimeout(() => elemento.remove(), 3500);
 }
