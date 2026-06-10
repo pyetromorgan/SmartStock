@@ -41,8 +41,6 @@ O projeto está dividido em módulos bem definidos para separar a interface do u
 │   │   └── routes/           # Endpoints e roteamento de requisições Express
 │   └── README.md             # Documentação do desenvolvedor do Back-end
 │
-├── Docs/                      # Documentação de projeto e artefatos
-│   └── Memorial Smart Stock.pdf
 │
 └── Front-end/                 # Interface gráfica hospedada no Netlify
     ├── dashboard.html
